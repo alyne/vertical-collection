@@ -515,7 +515,8 @@ const VerticalCollection = Component.extend({
     if (registerAPI) {
       /* List of methods to be exposed to public should be added here */
       let publicAPI = {
-        scrollToItem: this.scrollToItem.bind(this)
+        scrollToItem: this.scrollToItem.bind(this),
+        virtualComponents: this.virtualComponents,
       };
       registerAPI(publicAPI);
     }
