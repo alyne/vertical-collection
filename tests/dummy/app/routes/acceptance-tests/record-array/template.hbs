@@ -5,7 +5,7 @@
       @items={{this.items}}
       @estimateHeight={{50}}
       @bufferSize={{5}}
-      @firstVisibleChanged={{action "firstVisibleChanged"}}
+      @firstVisibleChanged={{this.firstVisibleChanged}}
       as |item index|
     >
       <NumberSlide @item={{item}} @itemIndex={{index}} @prefixed={{this.prefixed}} />
@@ -13,12 +13,13 @@
   </div>
 {{/if}}
 
-<input id="first-visible-id" type="hidden" value={{this.firstVisibleId}}/>
+<input id="first-visible-id" type="hidden" value={{this.firstVisibleId}} />
 
-<button id="hide-vc-button" {{action "hideVC"}}>Hide VC</button>
-<button id="show-vc-button" {{action "showVC"}}>Show VC</button>
-<button id="partial-update-button" {{action "showLast" 5}}>Show Last 5</button>
-<button id="last-25-button" {{action "showLast" 25}}>Show Last 25</button>
-<button id="show-all" {{action "showAll"}}>Show All</button>
-<button id="update-items-button" {{action "updateItems"}}>Update items</button>
-<button id="show-prefixed-button" {{action "showPrefixed"}}>Show prefixed (computed)</button>
+<button id="hide-vc-button" type="button" {{on "click" this.hideVC}}>Hide VC</button>
+<button id="show-vc-button" type="button" {{on "click" this.showVC}}>Show VC</button>
+<button id="partial-update-button" type="button" {{on "click" (fn this.showLast 5)}}>Show Last 5</button>
+<button id="last-25-button" type="button" {{on "click" (fn this.showLast 25)}}>Show Last 25</button>
+<button id="show-all" type="button" {{on "click" this.showAll}}>Show All</button>
+<button id="update-items-button" type="button" {{on "click" this.updateItems}}>Update items</button>
+<button id="show-prefixed-button" type="button" {{on "click" this.showPrefixed}}>Show prefixed
+  (computed)</button>

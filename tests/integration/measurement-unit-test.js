@@ -1,20 +1,17 @@
 import { module } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
-import {
-  findAll
-} from '@ember/test-helpers';
+import { findAll } from '@ember/test-helpers';
 
 import getNumbers from 'dummy/lib/get-numbers';
 
 import {
   testScenarios,
-
   simpleScenariosFor,
-  scenariosFor
+  scenariosFor,
 } from 'dummy/tests/helpers/test-scenarios';
 
-module('vertical-collection', 'Integration | Measurement Unit Tests', function(hooks) {
+module('vertical-collection', 'Integration | Measurement Unit Tests', function (hooks) {
   setupRenderingTest(hooks);
 
   testScenarios(
@@ -36,7 +33,7 @@ module('vertical-collection', 'Integration | Measurement Unit Tests', function(h
       </div>
     `,
 
-    async function(assert) {
+    async function (assert) {
       assert.equal(findAll('vertical-item').length, 5);
     }
   );
@@ -60,7 +57,7 @@ module('vertical-collection', 'Integration | Measurement Unit Tests', function(h
       </div>
     `,
 
-    async function(assert) {
+    async function (assert) {
       assert.equal(findAll('vertical-item').length, 5);
     }
   );
@@ -84,7 +81,7 @@ module('vertical-collection', 'Integration | Measurement Unit Tests', function(h
       </div>
     `,
 
-    async function(assert) {
+    async function (assert) {
       assert.equal(findAll('vertical-item').length, 2);
     }
   );
@@ -108,7 +105,7 @@ module('vertical-collection', 'Integration | Measurement Unit Tests', function(h
       </div>
     `,
 
-    async function(assert) {
+    async function (assert) {
       assert.equal(findAll('vertical-item').length, 5);
     }
   );
@@ -135,7 +132,7 @@ module('vertical-collection', 'Integration | Measurement Unit Tests', function(h
       </div>
     `,
 
-    function(assert) {
+    function (assert) {
       assert.equal(findAll('vertical-item').length, 10);
     }
   );
@@ -164,7 +161,7 @@ module('vertical-collection', 'Integration | Measurement Unit Tests', function(h
       </div>
     `,
 
-    function(assert) {
+    function (assert) {
       assert.equal(findAll('vertical-item').length, 10);
     }
   );
@@ -193,7 +190,7 @@ module('vertical-collection', 'Integration | Measurement Unit Tests', function(h
       </div>
     `,
 
-    function(assert) {
+    function (assert) {
       assert.equal(findAll('vertical-item').length, 10);
     }
   );
@@ -220,7 +217,7 @@ module('vertical-collection', 'Integration | Measurement Unit Tests', function(h
       </div>
     `,
 
-    function(assert) {
+    function (assert) {
       assert.equal(findAll('vertical-item').length, 10);
     }
   );

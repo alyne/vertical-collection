@@ -1,7 +1,7 @@
-import DS from 'ember-data';
+import JSONAPISerializer from '@ember-data/serializer/json-api';
 
-export default DS.JSONAPISerializer.extend({
+export default class ApplicationSerializer extends JSONAPISerializer {
   normalizeResponse(_, __, payload) {
     return payload;
   }
-});
+}

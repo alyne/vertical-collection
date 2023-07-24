@@ -1,27 +1,32 @@
 module.exports = {
   root: true,
+  parser: '@babel/eslint-parser',
   parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: 'module'
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    requireConfigFile: false,
+    babelOptions: {
+      plugins: [['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }]],
+    },
   },
-  plugins: [
-    'ember'
-  ],
+  plugins: ['ember'],
   extends: [
     'eslint:recommended',
-    'plugin:ember/recommended'
+    'plugin:ember/recommended',
+    'plugin:qunit/recommended',
+    'plugin:prettier/recommended',
   ],
   env: {
-    browser: true
+    browser: true,
   },
   globals: {
     ArrayBuffer: true,
-    Float32Array: true
+    Float32Array: true,
   },
   rules: {
-    'quotes': ['error', 'single', { 'allowTemplateLiterals': true, 'avoidEscape': true }],
+    quotes: ['error', 'single', { allowTemplateLiterals: true, avoidEscape: true }],
 
-    'ember/closure-actions': 'off'
+    'ember/closure-actions': 'off',
   },
   overrides: [
     // node files
@@ -34,25 +39,20 @@ module.exports = {
         'testem.js',
         'blueprints/*/index.js',
         'config/**/*.js',
-        'tests/dummy/config/**/*.js'
+        'tests/dummy/config/**/*.js',
       ],
-      excludedFiles: [
-        'addon/**',
-        'addon-test-support/**',
-        'app/**',
-        'tests/dummy/app/**'
-      ],
+      excludedFiles: ['addon/**', 'addon-test-support/**', 'app/**', 'tests/dummy/app/**'],
       parserOptions: {
-        sourceType: 'script'
+        sourceType: 'script',
       },
       env: {
         browser: false,
-        node: true
+        node: true,
       },
       plugins: ['node'],
       rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
         // add your custom rules and overrides for node files here
-      })
-    }
-  ]
+      }),
+    },
+  ],
 };

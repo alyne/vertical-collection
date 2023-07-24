@@ -7,9 +7,13 @@
           @items={{this.model.filtered}}
           @defaultHeight={{270}}
           @useContentProxy={{false}}
-        as |item index|>
+          as |item index|
+        >
           <div class="image-slide">
-            <Examples::InfiniteScroll::Components::NumberSlide @number={{item.number}} @index={{index}} />
+            <Examples::InfiniteScroll::Components::NumberSlide
+              @number={{item.number}}
+              @index={{index}}
+            />
           </div>
         </VerticalCollection>
       </div>
@@ -20,7 +24,7 @@
         Ensure we can shrink the array safely.
       </p>
       <p>
-        <button {{action "filter"}}>Trigger Filter</button>
+        <button type="button" {{on "click" this.filter}}>Trigger Filter</button>
       </p>
       <h4>Code for Demo</h4>
     </div>

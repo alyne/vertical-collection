@@ -1,14 +1,9 @@
-import { computed } from '@ember/object';
-import DS from 'ember-data';
+import Model, { attr } from '@ember-data/model';
 
-const {
-  attr,
-  Model
-} = DS;
+export default class NumberItemModel extends Model {
+  @attr('number') number;
 
-export default Model.extend({
-  number: attr('number'),
-  prefixed: computed('number', function() {
-    return `${this.number}`;
-  })
-});
+  get prefixed() {
+    return `${this.number}dsa`;
+  }
+}
