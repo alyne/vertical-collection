@@ -194,7 +194,7 @@ export default class DynamicRadar extends Radar {
       let margin;
 
       if (previousItem !== undefined) {
-        margin = currentItemTop - getScaledClientRect(previousItem, _transformScale).bottom;
+        margin = Math.abs(currentItemTop - getScaledClientRect(previousItem, _transformScale).bottom);
       } else {
         margin = currentItemTop - getScaledClientRect(_occludedContentBefore, _transformScale).bottom;
       }
