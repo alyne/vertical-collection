@@ -1,22 +1,17 @@
+/* eslint-disable ember/no-computed-properties-in-native-classes */
 import { DEBUG } from '@glimmer/env';
 import { assert } from '@ember/debug';
 
-import { empty, readOnly } from '@ember/object/computed';
+import { isEmpty } from '@ember/utils';
 
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { get, computed } from '@ember/object';
 import { run } from '@ember/runloop';
-import layout from './template';
 import { ViewportContainer } from '../../-private';
 
 import { scheduler, Token } from 'ember-raf-scheduler';
 
-import {
-  keyForItem,
-  DynamicRadar,
-  StaticRadar,
-  objectAt
-} from '../../-private';
+import { keyForItem, DynamicRadar, StaticRadar, objectAt } from '../../-private';
 
 /*
  * BEGIN DEBUG HELPERS
@@ -113,7 +108,7 @@ class Visualization {
       totalBefore,
       totalAfter,
       skipList,
-      _calculatedEstimateHeight
+      _calculatedEstimateHeight,
     } = this.radar;
 
     const isDynamic = !!skipList;
@@ -136,7 +131,11 @@ class Visualization {
       }
     }
 
-    for (let itemIndex = firstVisualizedIndex, i = 0; itemIndex <= lastVisualizedIndex; itemIndex++, i++) {
+    for (
+      let itemIndex = firstVisualizedIndex, i = 0;
+      itemIndex <= lastVisualizedIndex;
+      itemIndex++, i++
+    ) {
       const element = sats[i];
 
       const itemHeight = isDynamic ? itemHeights[itemIndex] : _calculatedEstimateHeight;
@@ -178,11 +177,7 @@ class Visualization {
  * END DEBUG HELPERS
  */
 
-const VerticalCollection = Component.extend({
-  layout,
-
-  tagName: '',
-
+export default class VerticalCollectionComponent extends Component {
   /**
    * Property name used for storing references to each item in items. Accessing this attribute for each item
    * should yield a unique result for every item in the list.
@@ -191,7 +186,10 @@ const VerticalCollection = Component.extend({
    * @type String
    * @default '@identity'
    */
-  key: '@identity',
+  @computed('args.key')
+  get key() {
+    return this.args.key ?? '@identity';
+  }
 
   // –––––––––––––– Required Settings
 
@@ -203,7 +201,10 @@ const VerticalCollection = Component.extend({
    * @type Number
    * @required
    */
-  estimateHeight: null,
+  @computed('args.estimateHeight')
+  get estimateHeight() {
+    return this.args.estimateHeight ?? null;
+  }
 
   /**
    * List of objects to svelte-render.
@@ -213,7 +214,10 @@ const VerticalCollection = Component.extend({
    * @type Array
    * @required
    */
-  items: null,
+  @computed('args.items.[]')
+  get items() {
+    return this.args.items ?? null;
+  }
 
   // –––––––––––––– Optional Settings
   /**
@@ -224,7 +228,10 @@ const VerticalCollection = Component.extend({
    * @property staticHeight
    * @type Boolean
    */
-  staticHeight: false,
+  @computed('args.staticHeight')
+  get staticHeight() {
+    return this.args.staticHeight ?? false;
+  }
 
   /**
    * Indicates whether or not list items in the Radar should be reused on update of virtual components (e.g. scroll).
@@ -239,7 +246,10 @@ const VerticalCollection = Component.extend({
    * @property shouldRecycle
    * @type Boolean
    */
-  shouldRecycle: true,
+  @computed('args.shouldRecycle')
+  get shouldRecycle() {
+    return this.args.shouldRecycle ?? true;
+  }
 
   /*
    * A selector string that will select the element from
@@ -252,7 +262,10 @@ const VerticalCollection = Component.extend({
    *
    * Set this to "body" to scroll the entire web page.
    */
-  containerSelector: '*',
+  @computed('args.containerSelector')
+  get containerSelector() {
+    return this.args.containerSelector ?? '*';
+  }
 
   // –––––––––––––– Performance Tuning
   /**
@@ -264,7 +277,10 @@ const VerticalCollection = Component.extend({
    * @type Number
    * @default 1
    */
-  bufferSize: 1,
+  @computed('args.bufferSize')
+  get bufferSize() {
+    return this.args.bufferSize ?? 1;
+  }
 
   // –––––––––––––– Initial Scroll State
   /**
@@ -277,7 +293,10 @@ const VerticalCollection = Component.extend({
    * is set to 0.
    * @property idForFirstItem
    */
-  idForFirstItem: null,
+  @computed('args.idForFirstItem')
+  get idForFirstItem() {
+    return this.args.idForFirstItem ?? null;
+  }
 
   /**
    * If set, if scrollPosition is empty
@@ -287,7 +306,10 @@ const VerticalCollection = Component.extend({
    * @type Boolean
    * @default false
    */
-  renderFromLast: false,
+  @computed('args.renderFromLast')
+  get renderFromLast() {
+    return this.args.renderFromLast ?? false;
+  }
 
   /**
    * If set to true, the collection will render all of the items passed into the component.
@@ -303,7 +325,10 @@ const VerticalCollection = Component.extend({
    * @type Boolean
    * @default false
    */
-  renderAll: false,
+  @computed('args.renderAll')
+  get renderAll() {
+    return this.args.renderAll ?? false;
+  }
 
   /**
    * The tag name used in DOM elements before and after the rendered list. By default, it is set to
@@ -311,15 +336,32 @@ const VerticalCollection = Component.extend({
    * overriden to provide custom behavior (for example, in table user wants to set it to 'tr' to
    * comply with table semantics).
    */
-  occlusionTagName: 'occluded-content',
+  @computed('args.occlusionTagName')
+  get occlusionTagName() {
+    return this.args.occlusionTagName || 'occluded-content';
+  }
 
-  isEmpty: empty('items'),
-  shouldYieldToInverse: readOnly('isEmpty'),
+  get isEmpty() {
+    return isEmpty(this.items);
+  }
 
-  virtualComponents: computed('items.[]', 'renderAll', 'estimateHeight', 'bufferSize', function() {
-    const { _radar } = this;
+  get shouldYieldToInverse() {
+    return this.isEmpty;
+  }
 
-    const items = this.items;
+  @computed('args.initialRenderCount')
+  get initialRenderCount() {
+    return this.args.initialRenderCount;
+  }
+
+  @computed('args.startingIndex')
+  get startingIndex() {
+    return this.args.startingIndex;
+  }
+
+  @computed('items', 'renderAll', 'estimateHeight', 'bufferSize')
+  get virtualComponents() {
+    const { items, _radar } = this;
 
     _radar.items = items === null || items === undefined ? [] : items;
     _radar.estimateHeight = this.estimateHeight;
@@ -330,17 +372,17 @@ const VerticalCollection = Component.extend({
     this._clearScheduledActions();
 
     return _radar.virtualComponents;
-  }),
+  }
 
   schedule(queueName, job) {
     return scheduler.schedule(queueName, job, this.token);
-  },
+  }
 
   _clearScheduledActions() {
     clearTimeout(this._nextSendActions);
     this._nextSendActions = null;
     this._scheduledActions.length = 0;
-  },
+  }
 
   _scheduleSendAction(action, index) {
     this._scheduledActions.push([action, index]);
@@ -358,7 +400,7 @@ const VerticalCollection = Component.extend({
             const key = keyForItem(item, keyPath, index);
 
             // this.sendAction will be deprecated in ember 4.0
-            const _action = get(this, action);
+            const _action = get(this.args, action) || get(this, action);
             if (typeof _action == 'function') {
               _action(item, index, key);
             } else if (typeof _action === 'string') {
@@ -369,7 +411,7 @@ const VerticalCollection = Component.extend({
         });
       });
     }
-  },
+  }
 
   /* Public API Methods
      @index => number
@@ -384,19 +426,20 @@ const VerticalCollection = Component.extend({
     _radar._prevFirstVisibleIndex = _radar._prevFirstItemIndex = index;
     // Components will be rendered after schedule 'measure' inside 'update' method.
     // In our case, we need to focus the element after component is rendered. So passing the promise.
-    return new Promise ((resolve) => {
+    return new Promise((resolve) => {
       _radar.scheduleUpdate(false, resolve);
     });
-  },
+  }
 
   // –––––––––––––– Setup/Teardown
-  didInsertElement() {
+  _didInsertElement() {
     this.schedule('sync', () => {
       this._radar.start();
     });
-  },
+  }
 
   willDestroy() {
+    super.willDestroy(...arguments);
     this.token.cancel();
     this._radar.destroy();
     let registerAPI = this.registerAPI;
@@ -412,10 +455,10 @@ const VerticalCollection = Component.extend({
         this.__visualization = null;
       }
     }
-  },
+  }
 
-  init() {
-    this._super();
+  constructor() {
+    super(...arguments);
 
     this.token = new Token();
     const RadarClass = this.staticHeight ? StaticRadar : DynamicRadar;
@@ -432,27 +475,24 @@ const VerticalCollection = Component.extend({
       shouldRecycle,
       occlusionTagName,
       idForFirstItem,
-      key
+      key,
     } = this;
 
     const startingIndex = calculateStartingIndex(items, idForFirstItem, key, renderFromLast);
 
-    this._radar = new RadarClass(
-      this.token,
-      {
-        bufferSize,
-        containerSelector,
-        estimateHeight,
-        initialRenderCount,
-        items,
-        key,
-        renderAll,
-        renderFromLast,
-        shouldRecycle,
-        startingIndex,
-        occlusionTagName
-      }
-    );
+    this._radar = new RadarClass(this.token, {
+      bufferSize,
+      containerSelector,
+      estimateHeight,
+      initialRenderCount,
+      items,
+      key,
+      renderAll,
+      renderFromLast,
+      shouldRecycle,
+      startingIndex,
+      occlusionTagName,
+    });
 
     this._prevItemsLength = 0;
     this._prevFirstKey = null;
@@ -462,10 +502,10 @@ const VerticalCollection = Component.extend({
     this._scheduledActions = [];
     this._nextSendActions = null;
 
-    let a = !!this.lastReached;
-    let b = !!this.firstReached;
-    let c = !!this.lastVisibleChanged;
-    let d = !!this.firstVisibleChanged;
+    let a = !!this.args.lastReached;
+    let b = !!this.args.firstReached;
+    let c = !!this.args.lastVisibleChanged;
+    let d = !!this.args.firstVisibleChanged;
     let any = a || b || c || d;
 
     if (any) {
@@ -473,7 +513,7 @@ const VerticalCollection = Component.extend({
         lastReached: a,
         firstReached: b,
         lastVisibleChanged: c,
-        firstVisibleChanged: d
+        firstVisibleChanged: d,
       };
 
       this._radar.sendAction = (action, index) => {
@@ -484,7 +524,7 @@ const VerticalCollection = Component.extend({
     }
 
     /* Public methods to Expose to parent
-      
+
       Usage:
 
       Template:
@@ -492,7 +532,7 @@ const VerticalCollection = Component.extend({
       <VerticalCollection @registerAPI={{action "registerAPI"}} />
 
       Component:
-      
+
       export default Component.extend({
         actions: {
           registerAPI(api) {
@@ -504,18 +544,18 @@ const VerticalCollection = Component.extend({
           collectionAPI.scrollToItem(index);
         }
       });
-        
+
       Need to pass this property in the vertical-collection template
       Listen in the component actions and do your custom logic
        This API will have below methods.
         1. scrollToItem
     */
 
-    let registerAPI = get(this, 'registerAPI');
+    const { registerAPI } = this.args;
     if (registerAPI) {
       /* List of methods to be exposed to public should be added here */
       let publicAPI = {
-        scrollToItem: this.scrollToItem.bind(this)
+        scrollToItem: this.scrollToItem.bind(this),
       };
       registerAPI(publicAPI);
     }
@@ -523,13 +563,12 @@ const VerticalCollection = Component.extend({
     if (DEBUG) {
       this.__visualization = null;
       this._radar._debugDidUpdate = () => {
-
         // Update visualization
         //
         // This debugging mode can be controlled via the argument
         // `@debugVis={{true}}` at component invocation.
         //
-        if (this.debugVis !== true) {
+        if (this.args.debugVis !== true) {
           if (this.__visualization !== null) {
             console.info('tearing down existing visualization'); // eslint-disable-line no-console
             this.__visualization.destroy();
@@ -563,37 +602,68 @@ const VerticalCollection = Component.extend({
           styles = window.getComputedStyle(document.body);
         }
 
-        assert(`scrollContainer cannot be inline.`, styleIsOneOf(styles, 'display', ['block', 'inline-block', 'flex', 'inline-flex']));
-        assert(`scrollContainer must define position`, styleIsOneOf(styles, 'position', ['static', 'relative', 'absolute']));
-        assert(`scrollContainer must define height or max-height`, hasStyleWithNonZeroValue(styles, 'height') || hasStyleWithNonZeroValue(styles, 'max-height'));
+        assert(
+          `scrollContainer cannot be inline.`,
+          styleIsOneOf(styles, 'display', ['block', 'inline-block', 'flex', 'inline-flex'])
+        );
+        assert(
+          `scrollContainer must define position`,
+          styleIsOneOf(styles, 'position', ['static', 'relative', 'absolute'])
+        );
+        assert(
+          `scrollContainer must define height or max-height`,
+          hasStyleWithNonZeroValue(styles, 'height') ||
+            hasStyleWithNonZeroValue(styles, 'max-height')
+        );
 
         // conditional perf check for non-body scrolling
         if (radar.scrollContainer !== ViewportContainer) {
-          assert(`scrollContainer must define overflow-y`, hasStyleValue(styles, 'overflow-y', 'scroll') || hasStyleValue(styles, 'overflow', 'scroll'));
+          assert(
+            `scrollContainer must define overflow-y`,
+            hasStyleValue(styles, 'overflow-y', 'scroll') ||
+              hasStyleValue(styles, 'overflow', 'scroll')
+          );
         }
 
         // check itemContainer
         styles = window.getComputedStyle(radar.itemContainer);
 
-        assert(`itemContainer cannot be inline.`, styleIsOneOf(styles, 'display', ['block', 'inline-block', 'flex', 'inline-flex']));
-        assert(`itemContainer must define position`, styleIsOneOf(styles, 'position', ['static', 'relative', 'absolute']));
+        assert(
+          `itemContainer cannot be inline.`,
+          styleIsOneOf(styles, 'display', ['block', 'inline-block', 'flex', 'inline-flex'])
+        );
+        assert(
+          `itemContainer must define position`,
+          styleIsOneOf(styles, 'position', ['static', 'relative', 'absolute'])
+        );
 
         // check item defaults
-        assert(`You must supply at least one item to the collection to debug it's CSS.`, this.items.length);
+        assert(
+          `You must supply at least one item to the collection to debug it's CSS.`,
+          this.items.length
+        );
 
         let element = radar._itemContainer.firstElementChild;
 
         styles = window.getComputedStyle(element);
 
-        assert(`Item cannot be inline.`, styleIsOneOf(styles, 'display', ['block', 'inline-block', 'flex', 'inline-flex']));
-        assert(`Item must define position`, styleIsOneOf(styles, 'position', ['static', 'relative', 'absolute']));
+        assert(
+          `Item cannot be inline.`,
+          styleIsOneOf(styles, 'display', ['block', 'inline-block', 'flex', 'inline-flex'])
+        );
+        assert(
+          `Item must define position`,
+          styleIsOneOf(styles, 'position', ['static', 'relative', 'absolute'])
+        );
       };
     }
+
+    this._didInsertElement();
   }
-});
+}
 
 function calculateStartingIndex(items, idForFirstItem, key, renderFromLast) {
-  const totalItems = get(items, 'length');
+  const totalItems = items?.length;
 
   let startingIndex = 0;
 
@@ -611,5 +681,3 @@ function calculateStartingIndex(items, idForFirstItem, key, renderFromLast) {
 
   return startingIndex;
 }
-
-export default VerticalCollection;

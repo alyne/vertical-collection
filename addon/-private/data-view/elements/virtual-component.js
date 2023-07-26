@@ -1,4 +1,4 @@
-import { set } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 import { assert } from '@ember/debug';
 import { DEBUG } from '@glimmer/env';
 
@@ -7,6 +7,11 @@ import document from '../../utils/document-shim';
 let VC_IDENTITY = 0;
 
 export default class VirtualComponent {
+  @tracked upperBound;
+  @tracked lowerBound;
+  @tracked content;
+  @tracked index;
+
   constructor(content = null, index = null) {
     this.id = `VC-${VC_IDENTITY++}`;
 
@@ -55,11 +60,17 @@ export default class VirtualComponent {
 
         const text = upperBound.textContent;
 
-        assert(`All content inside of vertical-collection must be wrapped in an element. Detected a text node with content: ${text}`, text === '' || text.match(/^\s+$/));
+        assert(
+          `All content inside of vertical-collection must be wrapped in an element. Detected a text node with content: ${text}`,
+          text === '' || text.match(/^\s+$/)
+        );
       }
     }
 
-    assert('Items in a vertical collection require atleast one element in them', top !== Infinity && bottom !== -Infinity);
+    assert(
+      'Items in a vertical collection require atleast one element in them',
+      top !== Infinity && bottom !== -Infinity
+    );
 
     const height = bottom - top;
 
@@ -70,18 +81,18 @@ export default class VirtualComponent {
     assert(`You cannot set an item's content to undefined`, newContent);
 
     if (this.index !== newIndex) {
-      set(this, 'index', newIndex);
+      this.index = newIndex;
     }
 
     if (this.content !== newContent) {
-      set(this, 'content', newContent);
+      this.content = newContent;
     }
   }
 
   destroy() {
-    set(this, 'upperBound', null);
-    set(this, 'lowerBound', null);
-    set(this, 'content', null);
-    set(this, 'index', null);
+    this.upperBound = null;
+    this.lowerBound = null;
+    this.content = null;
+    this.index = null;
   }
 }

@@ -10,7 +10,10 @@ export default function keyForItem(item, keyPath, index) {
 
   switch (keyPath) {
     case '@index':
-      assert(`A numerical index must be supplied for keyForItem when keyPath is @index, received: ${index}`, typeof index === 'number');
+      assert(
+        `A numerical index must be supplied for keyForItem when keyPath is @index, received: ${index}`,
+        typeof index === 'number'
+      );
       key = index;
       break;
     case '@identity':

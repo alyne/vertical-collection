@@ -1,8 +1,8 @@
+import JSONAPIAdapter from '@ember-data/adapter/json-api';
 import RSVP from 'rsvp';
-import DS from 'ember-data';
 
 const NUMBERS = {
-  data: []
+  data: [],
 };
 
 for (let i = 0; i < 100; i++) {
@@ -10,18 +10,19 @@ for (let i = 0; i < 100; i++) {
     type: 'number-item',
     id: `${i}`,
     attributes: {
-      number: i
-    }
+      number: i,
+    },
   });
 }
 
-export default DS.JSONAPIAdapter.extend({
+export default class ApplicationAdapter extends JSONAPIAdapter {
   findAll() {
     return RSVP.Promise.resolve(NUMBERS);
-  },
+  }
+
   query(store, model, query) {
     const queryData = { ...NUMBERS };
     queryData.data = NUMBERS.data.slice(0, query.length);
     return RSVP.Promise.resolve(queryData);
-  },
-});
+  }
+}

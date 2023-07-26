@@ -1,22 +1,20 @@
 import Controller from '@ember/controller';
+import { action } from '@ember/object';
 
-export default Controller.extend({
-  numImages: 50,
-  isFiltered: false,
+export default class ExamplesReduceDebugController extends Controller {
+  numImages = 50;
+  isFiltered = false;
 
-  actions: {
-    filter() {
-      let model = this.model.numbers;
-      let isFiltered = this.toggleProperty('isFiltered');
+  @action
+  filter() {
+    const model = this.model.numbers;
+    this.isFiltered = !this.isFiltered;
 
-      if (!isFiltered) {
-        this.set('model.filtered', model);
-      } else {
-        let filtered = model.filter(function(item) {
-          return item.number < 25;
-        });
-        this.set('model.filtered', filtered);
-      }
+    if (!this.isFiltered) {
+      this.model.set('filtered', model);
+    } else {
+      const filtered = model.filter((item) => item.number < 25);
+      this.model.set('filtered', filtered);
     }
   }
-});
+}

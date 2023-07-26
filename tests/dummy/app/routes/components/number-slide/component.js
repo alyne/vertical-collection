@@ -1,8 +1,5 @@
-import { alias } from '@ember/object/computed';
-import Component from '@ember/component';
-import { computed } from '@ember/object';
+import Component from '@glimmer/component';
 import { htmlSafe } from '@ember/template';
-import layout from './template';
 
 function numberToOpacity(number) {
   let r = number % 255;
@@ -17,21 +14,25 @@ function numberToOpacity(number) {
   return (255 / r).toFixed(3);
 }
 
-export default Component.extend({
-  tagName: 'number-slide',
-  attributeBindings: ['style'],
-  isDynamic: false,
-  prefixed: false,
-  style: computed('isDynamic', 'item', function() {
-    let item = this.item;
-    let isDynamic = this.isDynamic;
+export default class NumberSlideComponent extends Component {
+  get prefixed() {
+    return this.args.prefixed ?? false;
+  }
 
-    let {
-      height,
-      number
-    } = item;
+  get itemIndex() {
+    return this.args.itemIndex ?? 0;
+  }
 
-    let opacity = numberToOpacity(number);
+  get number() {
+    return this.args.item?.number;
+  }
+
+  get style() {
+    const { item = null, isDynamic = false } = this.args;
+
+    const { height, number } = item;
+
+    const opacity = numberToOpacity(number);
     let styleStr = `background: rgba(0,125,255,${opacity});`;
 
     if (isDynamic) {
@@ -39,9 +40,5 @@ export default Component.extend({
     }
 
     return htmlSafe(styleStr);
-  }),
-  layout,
-  itemIndex: 0,
-  item: null,
-  number: alias('item.number')
-});
+  }
+}

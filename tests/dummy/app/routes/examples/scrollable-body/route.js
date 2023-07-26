@@ -1,3 +1,3 @@
 import Route from '../infinite-scroll/route';
 
-export default Route.extend({});
+export default class ExamplesScrollableBodyRoute extends Route {}
